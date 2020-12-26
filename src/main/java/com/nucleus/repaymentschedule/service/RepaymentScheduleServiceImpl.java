@@ -16,10 +16,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * This class acts as a Service layer for adding Repayment Schedule .
- *
- */
 @Service
 @Transactional
 public class RepaymentScheduleServiceImpl implements RepaymentScheduleService {
@@ -38,13 +34,12 @@ public class RepaymentScheduleServiceImpl implements RepaymentScheduleService {
         transactionTemplate = new TransactionTemplate(transactionManager);
     }
 
+    static LocalDate returnDate(String date) {
+        LocalDate dt = LocalDate.parse(date);
+        return dt;
+    }
 
 
-    /**
-     * Adds a Repayment Schedule to the database.
-     * @param loanApplication whose RepaymentSchedule is to be saved.
-     * @return 1 if creation was successful, else 0.
-     */
     @Override
     public int addRepaymentSchedule(LoanApplications loanApplication) {
 
@@ -64,12 +59,7 @@ public class RepaymentScheduleServiceImpl implements RepaymentScheduleService {
         return r;
     }
 
-    /**
-     * calculate EMI for a particular loan
-     * @param rate,loanAmount,tenure,numberOfInstallment
-     * @return EMI amount
-     */
-    public double calculateEMI(double rate, double loanAmount, int tenure, int numberOfInstallment) {
+    double calculateEMI(double rate, double loanAmount, int tenure, int numberOfInstallment) {
         int n = numberOfInstallment * tenure;
         double r = (rate / (12 * 100));
         double num = loanAmount * r;
@@ -78,13 +68,9 @@ public class RepaymentScheduleServiceImpl implements RepaymentScheduleService {
         return installmentAmt;
     }
 
-    /**
-     * generate Repayment Schedule for a particular loan
-     * @param loanApplicationNumber,rate,loanAmount,tenure,installmentDueDate
-     * @return List of Repayment Schedule
-     */
-    public List<RepaymentSchedule> generateRepaymentSchedule(LoanApplications loanApplicationNumber, double rate, double loanAmount,
-                                                             int tenure, LocalDate installmentDueDate) {
+
+    List<RepaymentSchedule> generateRepaymentSchedule(LoanApplications loanApplicationNumber, double rate, double loanAmount,
+                                                      int tenure, LocalDate installmentDueDate) {
         int numberOfInstallment = 12; // Reapyment Frequency Assumed Monthly
 
         double installmentAmt = calculateEMI(rate, loanAmount, tenure, numberOfInstallment);
